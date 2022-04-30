@@ -29,11 +29,11 @@ is identified utilizing the tool vireoSNP.
 	│   ├── S1.bam  
 	│   ├── S1_barcodes.csv  
 	│   ├── S2.bam  
-	│   └── S2_barcodes.csv
+	│   └── S2_barcodes.csv  
 	├── resources  
 	│   └── {genomicSNP_collection}.vcf.gz  
 	└── workflow  
-		├── Snakefile
+		├── Snakefile  
 		├── report  
 		│   └── workflow.rst  
 		└── scripts  
