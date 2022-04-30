@@ -21,7 +21,7 @@ is identified utilizing the tool vireoSNP.
    Make sure to mount all necessary files so that you get the following folder structure. Input files are exemplary, they can have different naming
    schems or can be placed in subfolder - just put the right path in the samples.txt:
 
-`/	data  
+	data  
 	├── config  
 	│   ├── config.yaml  
 	│   └── samples.txt  
@@ -37,7 +37,7 @@ is identified utilizing the tool vireoSNP.
 		├── report  
 		│   └── workflow.rst  
 		└── scripts  
-			└── vireo_plots.py  `
+			└── vireo_plots.py  
 
 2. Run snakemake workflow, e.g.: `/snakemake -rp --cores 16`
 
