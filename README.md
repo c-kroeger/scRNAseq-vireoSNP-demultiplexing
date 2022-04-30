@@ -33,11 +33,11 @@ is identified utilizing the tool vireoSNP.
     ├── resources  
     │   └── {genomicSNP_collection}.vcf.gz  
     └── workflow  
-        ├── Snakefile  
-        ├── report  
-        │   └── workflow.rst  
-        └── scripts  
-            └── vireo_plots.py  
+            ├── Snakefile  
+            ├── report  
+            │   └── workflow.rst  
+            └── scripts  
+                └── vireo_plots.py  
 			
 
 2. Run snakemake workflow, e.g.: `snakemake -rp --cores 16`
