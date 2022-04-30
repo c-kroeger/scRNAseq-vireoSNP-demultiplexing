@@ -20,7 +20,7 @@ is identified utilizing the tool vireoSNP.
 1. Start a docker container in interactive mode using [jsschrepping/bioinfo-base-image:jss_v0.0.3](https://hub.docker.com/r/jsschrepping/bioinfo-base-image). 
    Make sure to mount all necessary files so that you get the following folder structure. Input files are exemplary, they can have different naming
    schems or can be placed in subfolder - just put the right path in the samples.txt:
-
+	`
 	data  
 	├── config  
 	│   ├── config.yaml  
@@ -38,7 +38,8 @@ is identified utilizing the tool vireoSNP.
 		│   └── workflow.rst  
 		└── scripts  
 			└── vireo_plots.py  
+	`		
 
-2. Run snakemake workflow, e.g.: `/snakemake -rp --cores 16`
+2. Run snakemake workflow, e.g.: `snakemake -rp --cores 16`
 
-3. Generate report with some summary plots: `/snakemake --report report.html`
+3. Generate report with some summary plots: `snakemake --report report.html`
