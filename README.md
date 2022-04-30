@@ -11,7 +11,7 @@ weak to infere donor identity accurately.
 In short, the pipeline sorts and indexes the bam files. The genotype of each cell is called using cellsnp light and the most likely donor origin
 is identified utilizing the tool vireoSNP.
 
-## required input
+## Input
 - bam files and matching file, listing all barcodes
 - reference vcf file comprising known genomic variants
 - samples.txt, listing sample name, path to bam and barcode files, number of multiplexed donors in the sample
@@ -19,25 +19,25 @@ is identified utilizing the tool vireoSNP.
 ## Running the pipeline
 1. Start a docker container in interactive mode using [jsschrepping/bioinfo-base-image:jss_v0.0.3](https://hub.docker.com/r/jsschrepping/bioinfo-base-image). 
    Make sure to mount all necessary files so that you get the following folder structure. Input files are exemplary, they can have different naming
-   schems or can be placed in subfolder - just put the right path in the samples.txt:
-	
-    data  
-    ├── config  
-    │   ├── config.yaml  
-    │   └── samples.txt  
-    ├── input  
-    │   ├── S1.bam  
-    │   ├── S1_barcodes.csv  
-    │   ├── S2.bam  
-    │   └── S2_barcodes.csv  
-    ├── resources  
-    │   └── {genomicSNP_collection}.vcf.gz  
-    └── workflow  
-            ├── Snakefile  
-            ├── report  
-            │   └── workflow.rst  
-            └── scripts  
-                └── vireo_plots.py  
+   schems or can be located in subfolder (the paths need to be in the samples.txt):
+   
+ 	data  
+	│ ── config  
+	│&nbsp; &nbsp; &nbsp; &nbsp; ├── config.yaml  
+	│&nbsp; &nbsp; &nbsp; &nbsp; └── samples.txt  
+	│── input  
+	│&nbsp; &nbsp; &nbsp; &nbsp; ├── S1.bam  
+	│&nbsp; &nbsp; &nbsp; &nbsp; ├── S1_barcodes.csv  
+	│&nbsp; &nbsp; &nbsp; &nbsp; ├── S2.bam  
+	│&nbsp; &nbsp; &nbsp; &nbsp; └── S2_barcodes.csv  
+	│── resources  
+	│&nbsp; &nbsp; &nbsp; &nbsp; └── {genomicSNP_collection}.vcf.gz  
+	└── workflow  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;│── Snakefile  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;│── report  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;│&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;└── workflow.rst  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;└── scripts  
+&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; └──vireo_plots.py  
 			
 
 2. Run snakemake workflow, e.g.: `snakemake -rp --cores 16`
