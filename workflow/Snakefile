@@ -1,0 +1,120 @@
+# Snakemake workflow for genotype-based demultiplexing of single-cell data
+# author: Charlotte Kroeger
+# date: 30.04.2022
+# run pipeline: snakemake -rp --cores 16
+# generate report: snakemake --report report.html
+
+#### import python packages ####
+import pandas as pd
+
+#### Load configfile and sample table ####
+#Load configuration file
+configfile: "config/config.yaml"
+
+# Load sample_table from configuration file
+sample_table = pd.read_csv(config["samples"], delimiter="\t").set_index("sample", drop=False)
+SAMPLES = sample_table.index
+
+#### add workflow describtion ####
+report: "report/workflow.rst"
+
+#### Defining input function ####
+
+def get_bam(wildcards):
+	return sample_table.loc[(wildcards.sample), "bam"]
+
+def get_barcodes(wildcards):
+	return sample_table.loc[(wildcards.sample), "barcodes"]
+
+def get_donor_N(wildcards):
+	return sample_table.loc[(wildcards.sample), "donors_to_demux"]
+
+
+#### Target rule ####
+rule all:
+	input:
+		expand("results/vireo/{sample}/donor_ids.tsv", sample=SAMPLES),
+		expand("results/vireo/{sample}/GT_donors.vireo.vcf.gz",sample=SAMPLES),
+		expand("results/vireo/GT_barcodes/{sample}_GT_barcodes.tsv", sample=SAMPLES),
+		expand("results/vireo/plots/{sample}_barchart.pdf", sample=SAMPLES),
+		expand("results/vireo/plots/{sample}_boxplots.pdf", sample=SAMPLES)
+
+#### Workflow ####
+
+rule sort_bam:
+	input:
+		bam=get_bam
+	output:
+		"results/sorted_bam/{sample}.sorted.bam"
+	threads: 8
+	shell:
+		"samtools sort -o {output} --threads {threads} {input.bam}"
+
+rule index_bam:
+	input:
+		bam="results/sorted_bam/{sample}.sorted.bam"
+	output:
+		"results/sorted_bam/{sample}.sorted.bam.bai"
+	threads: 8
+	shell:
+		"samtools index -@ {threads} {input.bam} {output}"
+
+rule cellsnp:
+	input:
+		bam="results/sorted_bam/{sample}.sorted.bam",
+		bai="results/sorted_bam/{sample}.sorted.bam.bai",
+		bc=get_barcodes
+	output:
+		cs1="results/cellsnp/{sample}/cellSNP.base.vcf.gz",
+		cs2="results/cellsnp/{sample}/cellSNP.samples.tsv",
+		cs3="results/cellsnp/{sample}/cellSNP.tag.AD.mtx",
+		cs4="results/cellsnp/{sample}/cellSNP.tag.DP.mtx",
+		cs5="results/cellsnp/{sample}/cellSNP.tag.OTH.mtx"
+	params:
+		dir="results/cellsnp/{sample}",
+		snp_ref=config["cellsnp"]["snp_ref"],
+		cellTAG=config["cellsnp"]["cellTAG"],
+		UMItag=config["cellsnp"]["UMItag"],
+		minMAF=config["cellsnp"]["minMAF"],
+		minCOUNT=config["cellsnp"]["minCOUNT"]
+	threads: 16
+	shell:
+		"""
+		cellsnp-lite -s {input.bam} -b {input.bc} --cellTAG "{params.cellTAG}" --UMItag "{params.UMItag}" -O {params.dir} -R {params.snp_ref} -p {threads} --minMAF {params.minMAF} --minCOUNT {params.minCOUNT} --gzip
+		"""
+
+rule vireo:
+	input:
+		cs1="results/cellsnp/{sample}/cellSNP.base.vcf.gz",
+		cs2="results/cellsnp/{sample}/cellSNP.samples.tsv",
+		cs3="results/cellsnp/{sample}/cellSNP.tag.AD.mtx",
+		cs4="results/cellsnp/{sample}/cellSNP.tag.DP.mtx",
+		cs5="results/cellsnp/{sample}/cellSNP.tag.OTH.mtx"
+	output:
+		donor_ids="results/vireo/{sample}/donor_ids.tsv",
+		vcf="results/vireo/{sample}/GT_donors.vireo.vcf.gz"
+	params:
+		dir_in="results/cellsnp/{sample}",
+		dir_out="results/vireo/{sample}",
+		donor_N=get_donor_N
+	shell:
+		"vireo -c {params.dir_in} -N {params.donor_N} -o {params.dir_out}"
+
+rule vireo_GTbarcode:
+	input:
+		"results/vireo/{sample}/GT_donors.vireo.vcf.gz"
+	output:
+		"results/vireo/GT_barcodes/{sample}_GT_barcodes.tsv"
+	params:
+		donor_N=get_donor_N
+	shell:
+		"GTbarcode -i {input} -o {output} --randSeed 1"
+
+rule vireo_plots:
+	input:
+		"results/vireo/{sample}/donor_ids.tsv"
+	output:
+		report("results/vireo/plots/{sample}_barchart.pdf",category="vireo_results",subcategory="barcodes per donor"),
+		report("results/vireo/plots/{sample}_boxplots.pdf",category="vireo_results",subcategory="variants per barcode")
+	script:
+		"scripts/vireo_plots.py"

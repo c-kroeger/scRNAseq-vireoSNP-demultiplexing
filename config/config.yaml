@@ -1,0 +1,11 @@
+# configuration file for genotype demultiplexing using vireo 
+
+# sample table (name, bam, barcode_list)
+samples: "config/samples.txt"
+
+cellsnp:
+ snp_ref: "resources/genome1K.phase3.SNP_AF5e2.chr1toX.hg38.vcf.gz"
+ cellTAG: "XC"
+ UMItag: "XM"
+ minMAF: 0.1
+ minCOUNT: 20
