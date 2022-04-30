@@ -21,23 +21,23 @@ is identified utilizing the tool vireoSNP.
    Make sure to mount all necessary files so that you get the following folder structure. Input files are exemplary, they can have different naming
    schems or can be placed in subfolder - just put the right path in the samples.txt:
 	
-	data  
-	├── config  
-	│   ├── config.yaml  
-	│   └── samples.txt  
-	├── input  
-	│   ├── S1.bam  
-	│   ├── S1_barcodes.csv  
-	│   ├── S2.bam  
-	│   └── S2_barcodes.csv  
-	├── resources  
-	│   └── {genomicSNP_collection}.vcf.gz  
-	└── workflow  
-	    ├── Snakefile  
-	    ├── report  
-	    │   └── workflow.rst  
-	    └── scripts  
-	        └── vireo_plots.py  
+    data  
+    ├── config  
+    │   ├── config.yaml  
+    │   └── samples.txt  
+    ├── input  
+    │   ├── S1.bam  
+    │   ├── S1_barcodes.csv  
+    │   ├── S2.bam  
+    │   └── S2_barcodes.csv  
+    ├── resources  
+    │   └── {genomicSNP_collection}.vcf.gz  
+    └── workflow  
+        ├── Snakefile  
+        ├── report  
+        │   └── workflow.rst  
+        └── scripts  
+            └── vireo_plots.py  
 			
 
 2. Run snakemake workflow, e.g.: `snakemake -rp --cores 16`
